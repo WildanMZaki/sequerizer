@@ -76,9 +76,9 @@ const { Sequelize } = require("sequelize");
 const { Sequerizer, Op, ModelError } = require("sequerizer");
 const { posts } = require("./blueprints.js");
 
-const sequelize = new Sequelize('database', 'username', 'password', {
-  host: 'localhost',
-  dialect: 'mysql',
+const sequelize = new Sequelize("database", "username", "password", {
+  host: "localhost",
+  dialect: "mysql",
 });
 
 const table = sequelize.define(...posts());
@@ -90,7 +90,9 @@ class PostModel extends Sequerizer {
 
   async getRecentPosts(limit = 10) {
     try {
-      const recentPosts = await this.orderBy('createdAt', 'DESC').limit(limit).get();
+      const recentPosts = await this.orderBy("createdAt", "DESC")
+        .limit(limit)
+        .get();
       return recentPosts;
     } catch (error) {
       throw new ModelError("Error fetching recent posts: " + error.message);
@@ -110,7 +112,7 @@ module.exports = Post;
 To create a new record:
 
 ```javascript
-const Post = require('./path_to_PostModel');
+const Post = require("./path_to_PostModel");
 
 async function createPost() {
   try {
@@ -136,7 +138,7 @@ To fetch records:
 ```javascript
 async function getPosts() {
   try {
-    const posts = await Post.where('views', 0).get();
+    const posts = await Post.where("views", 0).get();
     console.log(posts);
   } catch (error) {
     console.error(error.message);
@@ -153,7 +155,7 @@ To update records:
 ```javascript
 async function updatePost(id) {
   try {
-    const updated = await Post.where('id', id).update({ views: 10 });
+    const updated = await Post.where("id", id).update({ views: 10 });
     console.log(updated);
   } catch (error) {
     console.error(error.message);
@@ -170,7 +172,7 @@ To delete records:
 ```javascript
 async function deletePost(id) {
   try {
-    const deleted = await Post.where('id', id).delete();
+    const deleted = await Post.where("id", id).delete();
     console.log(deleted);
   } catch (error) {
     console.error(error.message);
@@ -229,13 +231,14 @@ createVerifiedPost({
 ### Methods
 
 #### async methods
+
 Please note that async method must be called with await or use .then chaining method with callback function inside .then method
+
 ```javascript
 // Callback way
-Post.get()
-  .then(function(posts) {
+Post.get().then(function (posts) {
   // do something with posts that returned from get method
-})
+});
 
 Post.verify(async (model) => {
   // Do something like verifying the data exists or no
@@ -243,14 +246,12 @@ Post.verify(async (model) => {
   return !isExists;
 }).then(async (model) => {
   await model.create({
-    ...data
-  })
-})
+    ...data,
+  });
+});
 
 // await way
-const posts = await Post.get() 
-
-
+const posts = await Post.get();
 ```
 
 #### create (async)
@@ -259,8 +260,8 @@ Create a single row of data.
 
 ```javascript
 Post.create({
-  title: 'Hot News',
-  content: 'Lorem ipsum ...',
+  title: "Hot News",
+  content: "Lorem ipsum ...",
 });
 ```
 
@@ -271,19 +272,19 @@ Insert one or multiple rows of data into the table.
 ```javascript
 // Single insert:
 Post.insert({
-  title: 'Hot News',
-  content: 'Lorem ipsum ...',
+  title: "Hot News",
+  content: "Lorem ipsum ...",
 });
 
 // Multiple inserts:
 Post.insert([
   {
-    title: 'Hot News',
-    content: 'Lorem ipsum ...',
+    title: "Hot News",
+    content: "Lorem ipsum ...",
   },
   {
-    title: 'Common News',
-    content: 'Lorem ipsum ...',
+    title: "Common News",
+    content: "Lorem ipsum ...",
   },
   // ...
 ]);
@@ -332,7 +333,7 @@ Post.find(id);
 // Returns null or an object
 
 // Throw an error if the data is not found
-Post.withError().find('xxxxx');
+Post.withError().find("xxxxx");
 ```
 
 #### needColumns
@@ -349,18 +350,14 @@ Post.needColumns(['column1', 'column2', ...])
 Define the conditions of the rows that you want to fetch, update, or delete.
 
 ```javascript
-Post.where('column', 'value')
-    .get();
+Post.where("column", "value").get();
 
 Post.where({
-  column1: 'value1',
-  column2: 'value2',
-})
-.get();
+  column1: "value1",
+  column2: "value2",
+}).get();
 
-Post.where('column1', 'value1')
-    .where('column2', 'value2')
-    .get();
+Post.where("column1", "value1").where("column2", "value2").get();
 ```
 
 #### orderBy
@@ -368,11 +365,9 @@ Post.where('column1', 'value1')
 Order fetched data.
 
 ```javascript
-Post.orderBy('createdAt', 'DESC')
-    .get();
+Post.orderBy("createdAt", "DESC").get();
 
-Post.orderBy('title', 'ASC')
-    .get();
+Post.orderBy("title", "ASC").get();
 ```
 
 #### limit
@@ -380,8 +375,7 @@ Post.orderBy('title', 'ASC')
 Limit the number of rows fetched from the table.
 
 ```javascript
-Post.limit(10)
-    .get();
+Post.limit(10).get();
 ```
 
 #### offset
@@ -389,9 +383,7 @@ Post.limit(10)
 Set the starting point for fetching rows from the table (useful for pagination).
 
 ```javascript
-Post.limit(10)
-    .offset(20)
-    .get();
+Post.limit(10).offset(20).get();
 ```
 
 #### verify (async)
@@ -400,12 +392,11 @@ Add custom verification logic using a callback function.
 
 ```javascript
 Post.verify(async (model) => {
-  const exists = await model.where('title', 'Some Title').exists();
+  const exists = await model.where("title", "Some Title").exists();
   return !exists;
-})
-.create({
-  title: 'Unique Title',
-  content: 'Unique Content ...',
+}).create({
+  title: "Unique Title",
+  content: "Unique Content ...",
 });
 ```
 
@@ -417,11 +408,21 @@ Add custom verification logic using a callback function. But now the process of 
 Post.verifySync((model) => {
   const exists = true;
   return !exists;
-})
-.create({
-  title: 'Unique Title',
-  content: 'Unique Content ...',
+}).create({
+  title: "Unique Title",
+  content: "Unique Content ...",
 });
+```
+
+#### count (async)
+
+Count total of the rows based on the condition
+
+```javascript
+Post.count(); // Count all
+
+const total = await Post.count({ status: "published" });
+console.log(total); // Returns total of the rows
 ```
 
 #### exists (async)
@@ -429,7 +430,7 @@ Post.verifySync((model) => {
 Check if any row exists based on specified conditions.
 
 ```javascript
-const exists = await Post.where('column', 'value').exists();
+const exists = await Post.where("column", "value").exists();
 console.log(exists); // Returns true or false
 ```
 
@@ -438,10 +439,9 @@ console.log(exists); // Returns true or false
 Update rows based on specified conditions.
 
 ```javascript
-Post.where('status', 'draft')
-    .update({
-      status: 'published',
-    });
+Post.where("status", "draft").update({
+  status: "published",
+});
 ```
 
 #### delete (async)
@@ -449,8 +449,7 @@ Post.where('status', 'draft')
 Delete rows based on specified conditions.
 
 ```javascript
-Post.where('status', 'obsolete')
-    .delete();
+Post.where("status", "obsolete").delete();
 ```
 
 #### first (async)
@@ -458,9 +457,7 @@ Post.where('status', 'obsolete')
 Fetch the first row that matches the specified conditions.
 
 ```javascript
-Post.where('status', 'published')
-    .orderBy('createdAt', 'ASC')
-    .first();
+Post.where("status", "published").orderBy("createdAt", "ASC").first();
 ```
 
 #### getOrCreate (async)
@@ -469,8 +466,8 @@ Fetch a row based on specified conditions or create it if it doesn't exist.
 
 ```javascript
 Post.getOrCreate({
-  title: 'Breaking News',
-  content: 'This just in ...',
+  title: "Breaking News",
+  content: "This just in ...",
 });
 ```
 
@@ -479,8 +476,7 @@ Post.getOrCreate({
 Add custom options to the query.
 
 ```javascript
-Post.option('raw', true)
-    .get();
+Post.option("raw", true).get();
 ```
 
 #### withError
@@ -488,8 +484,7 @@ Post.option('raw', true)
 Enable error throwing for not found conditions.
 
 ```javascript
-Post.withError()
-    .find('nonexistent-id');
+Post.withError().find("nonexistent-id");
 ```
 
 ### Error Handling
@@ -497,7 +492,13 @@ Post.withError()
 Sequerizer includes comprehensive error handling for all operations. You can catch and handle specific errors:
 
 ```javascript
-const { ModelError, CreateError, ReadError, UpdateError, DeleteError } = require("sequerizer");
+const {
+  ModelError,
+  CreateError,
+  ReadError,
+  UpdateError,
+  DeleteError,
+} = require("sequerizer");
 
 try {
   // Your code here...
@@ -521,6 +522,7 @@ try {
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
 
 This README includes:
+
 - **Blueprint Example**: Adds an example blueprint for the `posts` table.
 - **Model Definition**: Shows how to define the model using the blueprint.
 - **Usage Examples**: Includes examples of how to create, read, update, delete, and paginate posts.

@@ -282,4 +282,19 @@ describe("Sequerizer Class", () => {
     expect(users[0].name).toBe("User a");
     expect(users[1].name).toBe("User b");
   });
+
+  it("should return count of the user", async () => {
+    const userCount = await Users.count();
+    await Users.create({
+      name: "User x",
+      phone: "12345678990",
+      password: "passwordx",
+    });
+    const userX = await Users.count({
+      name: "User x",
+    });
+
+    expect(userCount).toBe(6);
+    expect(userX).toBe(2);
+  });
 });

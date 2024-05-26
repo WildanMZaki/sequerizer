@@ -22,69 +22,51 @@ npm install sequerizer
 
 ### Setup
 
-First, you need to configure your Sequelize instance and define your models. Here's an example setup:
+First, you need to configure your Sequelize instance and define your models. Here's an example setup using a `posts` table:
 
 ```javascript
 const { Sequelize } = require("sequelize");
 const { Sequerizer, Op, ModelError } = require("sequerizer");
+const { posts } = require("./blueprints.js");
 
 const sequelize = new Sequelize("database", "username", "password", {
   host: "localhost",
   dialect: "mysql",
 });
 
-const messagesBlueprint = [
-  "messages",
-  {
-    id: {
-      type: Sequelize.BIGINT,
-      autoIncrement: true,
-      primaryKey: true,
-      allowNull: false,
-    },
-    sender_id: {
-      type: Sequelize.BIGINT,
-      allowNull: false,
-    },
-    receiver_id: {
-      type: Sequelize.BIGINT,
-      allowNull: false,
-    },
-    message: {
-      type: Sequelize.TEXT,
-      allowNull: false,
-    },
-    is_media: {
-      type: Sequelize.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
-    },
-    has_read: {
-      type: Sequelize.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
-    },
-  },
-  {
-    tableName: "messages",
-    timestamps: true,
-    createdAt: "created_at",
-    updatedAt: "updated_at",
-  },
-];
+const table = sequelize.define(...posts());
 
-const table = sequelize.define(...messagesBlueprint);
-
-class Message extends Sequerizer {
+class PostModel extends Sequerizer {
   constructor() {
     super(table);
   }
+
+  async readWhere(conditions = {}) {
+    try {
+      const posts = await this.where(conditions).update({
+        has_read: true,
+      });
+      return posts;
+    } catch (error) {
+      throw new ModelError("Error updating has_read: " + error.message);
+    }
+  }
+
+  async getRecentPosts(limit = 10) {
+    try {
+      const recentPosts = await this.orderBy("createdAt", "DESC")
+        .limit(limit)
+        .get();
+      return recentPosts;
+    } catch (error) {
+      throw new ModelError("Error fetching recent posts: " + error.message);
+    }
+  }
 }
 
-module.exports = {
-  Message,
-  sequelize,
-};
+const Post = new PostModel();
+
+module.exports = Post;
 ```
 
 ### CRUD Operations
@@ -94,24 +76,24 @@ module.exports = {
 To create a new record:
 
 ```javascript
-const message = new Message();
+const post = new Post();
 
-async function createMessage() {
+async function createPost() {
   try {
-    const newMessage = await message.create({
+    const newPost = await post.create({
       sender_id: 1,
       receiver_id: 2,
-      message: "Hello, World!",
+      content: "Hello, World!",
       is_media: false,
       has_read: false,
     });
-    console.log(newMessage);
+    console.log(newPost);
   } catch (error) {
     console.error(error.message);
   }
 }
 
-createMessage();
+createPost();
 ```
 
 #### Read
@@ -119,16 +101,16 @@ createMessage();
 To fetch records:
 
 ```javascript
-async function getMessages() {
+async function getPosts() {
   try {
-    const messages = await message.where("has_read", false).get();
-    console.log(messages);
+    const posts = await post.where("has_read", false).get();
+    console.log(posts);
   } catch (error) {
     console.error(error.message);
   }
 }
 
-getMessages();
+getPosts();
 ```
 
 #### Update
@@ -136,16 +118,16 @@ getMessages();
 To update records:
 
 ```javascript
-async function updateMessage(id) {
+async function updatePost(id) {
   try {
-    const updated = await message.where("id", id).update({ has_read: true });
+    const updated = await post.where("id", id).update({ has_read: true });
     console.log(updated);
   } catch (error) {
     console.error(error.message);
   }
 }
 
-updateMessage(1);
+updatePost(1);
 ```
 
 #### Delete
@@ -153,16 +135,16 @@ updateMessage(1);
 To delete records:
 
 ```javascript
-async function deleteMessage(id) {
+async function deletePost(id) {
   try {
-    const deleted = await message.where("id", id).delete();
+    const deleted = await post.where("id", id).delete();
     console.log(deleted);
   } catch (error) {
     console.error(error.message);
   }
 }
 
-deleteMessage(1);
+deletePost(1);
 ```
 
 ### Pagination
@@ -170,16 +152,16 @@ deleteMessage(1);
 To paginate results:
 
 ```javascript
-async function getPaginatedMessages() {
+async function getPaginatedPosts() {
   try {
-    const messages = await message.limit(10).offset(20).get();
-    console.log(messages);
+    const posts = await post.limit(10).offset(20).get();
+    console.log(posts);
   } catch (error) {
     console.error(error.message);
   }
 }
 
-getPaginatedMessages();
+getPaginatedPosts();
 ```
 
 ### Middleware
@@ -187,9 +169,9 @@ getPaginatedMessages();
 To add custom middleware:
 
 ```javascript
-async function createVerifiedMessage(data) {
+async function createVerifiedPost(data) {
   try {
-    const newMessage = await message
+    const newPost = await post
       .verify(async (model) => {
         const exists = await model
           .where("receiver_id", data.receiver_id)
@@ -197,16 +179,16 @@ async function createVerifiedMessage(data) {
         return !exists;
       })
       .create(data);
-    console.log(newMessage);
+    console.log(newPost);
   } catch (error) {
     console.error(error.message);
   }
 }
 
-createVerifiedMessage({
+createVerifiedPost({
   sender_id: 1,
   receiver_id: 2,
-  message: "Verified Message",
+  content: "Verified Post",
   is_media: false,
   has_read: false,
 });
@@ -242,24 +224,61 @@ try {
 }
 ```
 
+### Custom Methods
+
+#### readWhere
+
+Marks posts as read based on conditions.
+
+```javascript
+async function markPostsAsRead(conditions) {
+  try {
+    const updatedPosts = await post.readWhere(conditions);
+    console.log(updatedPosts);
+  } catch (error) {
+    console.error(error.message);
+  }
+}
+
+markPostsAsRead({ receiver_id: 2 });
+```
+
+#### getRecentPosts
+
+Fetches the most recent posts, limited by the specified number.
+
+```javascript
+async function getRecentPosts(limit) {
+  try {
+    const recentPosts = await post.getRecentPosts(limit);
+    console.log(recentPosts);
+  } catch (error) {
+    console.error(error.message);
+  }
+}
+
+getRecentPosts(5);
+```
+
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
 
 ```
 
-### Explanation of Sections:
+This README includes:
 
 1. **Introduction**: Briefly explains what Sequerizer is.
-2. **Features**: Lists the main features of the Sequerizer.
+2. **Features**: Lists the main features of Sequerizer.
 3. **Installation**: Provides instructions on how to install Sequerizer via npm.
 4. **Usage**:
-   - **Setup**: Shows how to configure Sequelize and define models.
+   - **Setup**: Shows how to configure Sequelize and define models using a `posts` table.
    - **CRUD Operations**: Provides examples of Create, Read, Update, and Delete operations.
    - **Pagination**: Demonstrates how to limit and offset results for pagination.
    - **Middleware**: Explains how to add custom middleware for additional logic.
    - **Error Handling**: Details how to catch and handle specific errors.
+   - **Custom Methods**: Describes the custom methods (`readWhere`, `getRecentPosts`) and provides examples of how to use them.
 5. **License**: States the licensing information for the project.
 
-This README should help users understand how to use your Sequerizer library effectively.
+This should help users understand how to effectively use your Sequerizer library with the custom `PostModel` class.
 ```

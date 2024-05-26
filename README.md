@@ -525,5 +525,5 @@ This README includes:
 - **Model Definition**: Shows how to define the model using the blueprint.
 - **Usage Examples**: Includes examples of how to create, read, update, delete, and paginate posts.
 - **Middleware**: Shows how to add custom middleware.
+- **Methods**: Description for each method
 - **Error Handling**: Describes how to handle different types of errors.
-- **Custom Methods**: Provides examples of custom methods (`readWhere` and `getRecentPosts`) for the `PostModel` class.

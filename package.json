@@ -1,0 +1,32 @@
+{
+  "name": "@wildanmzaki/sequerizer",
+  "version": "1.0.0",
+  "description": "This is simplifier sequelize model, and it has similiar method with eloquent methods in laravel",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WildanMZaki/sequerizer.git"
+  },
+  "keywords": [
+    "sequelize",
+    "sql",
+    "node",
+    "mysql"
+  ],
+  "author": "WildanMZaki",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/WildanMZaki/sequerizer/issues"
+  },
+  "homepage": "https://github.com/WildanMZaki/sequerizer#readme",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
+  "dependencies": {
+    "mysql2": "^3.9.7",
+    "sequelize": "^6.37.3"
+  }
+}

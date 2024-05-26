@@ -370,6 +370,22 @@ Post.orderBy("createdAt", "DESC").get();
 Post.orderBy("title", "ASC").get();
 ```
 
+#### groupBy
+
+Group result by the column
+
+```javascript
+Post.groupBy("category").get();
+```
+
+#### groupWith
+
+Group result by the columns
+
+```javascript
+Post.groupWith(["category", "tag"]).get();
+```
+
 #### limit
 
 Limit the number of rows fetched from the table.

@@ -297,4 +297,14 @@ describe("Sequerizer Class", () => {
     expect(userCount).toBe(6);
     expect(userX).toBe(2);
   });
+
+  it("should groping by groupBy method", async () => {
+    const userCount = await Users.count();
+
+    const userByName = await Users.groupBy("name").get();
+    console.log(userByName);
+
+    expect(userCount).toBe(7);
+    expect(userByName.length).toBe(6);
+  });
 });

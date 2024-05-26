@@ -1,6 +1,6 @@
 {
   "name": "wmz-sequerizer",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "This is simplifier sequelize model, and it has similiar method with eloquent methods in laravel",
   "main": "index.js",
   "scripts": {

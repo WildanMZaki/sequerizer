@@ -1,5 +1,3 @@
-Sure, here's the modified README.md to include an example blueprint for the `posts` table and all the required fields.
-
 # Sequerizer
 
 Sequerizer is a simple and powerful ORM (Object Relational Mapper) built on top of Sequelize. It provides a clean and easy-to-use interface for interacting with your database models.

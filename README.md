@@ -15,7 +15,7 @@ Sequerizer is a simple and powerful ORM (Object Relational Mapper) built on top 
 Install via npm:
 
 ```bash
-npm install @wildanmzaki/sequerizer
+npm install wmz-sequerizer
 ```
 
 ## Usage
@@ -71,7 +71,7 @@ Define your model using Sequerizer and the blueprint:
 
 ```javascript
 const { Sequelize } = require("sequelize");
-const { Sequerizer, Op, ModelError } = require("sequerizer");
+const { Sequerizer, Op, ModelError } = require("wmz-sequerizer");
 const { posts } = require("./blueprints.js");
 
 const sequelize = new Sequelize("database", "username", "password", {
